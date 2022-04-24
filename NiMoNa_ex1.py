@@ -77,8 +77,8 @@ def plot():
         axs[row][1].plot(f2(w, x_0, v_0, h, lower_limit, upper_limit)[0], f2(w, x_0, v_0, h, lower_limit, upper_limit)[2])
         axs[row][2].plot(f2(w, x_0, v_0, h, lower_limit, upper_limit)[0], f2(w, x_0, v_0, h, lower_limit, upper_limit)[3])
         axs[row][0].set_ylabel("h = {0}".format(h))
-    axs[0][0].set_title("Ableitung")     
-    axs[0][1].set_title("Euler-Methode")
+    axs[0][0].set_title("x'")     
+    axs[0][1].set_title("x nach Euler")
     axs[0][2].set_title("sin(wx)")
     
 
