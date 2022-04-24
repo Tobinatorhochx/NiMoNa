@@ -1,22 +1,27 @@
-from turtle import up
+#I hope that everything works as intended, although I don´t think that this implementation is the most efficient.
+
+
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 
 def f1(a, h, a_0, lower_limit, upper_limit):
-    
+    #arrays containing all x- and analytically solved values of the function
     x = np.linspace(lower_limit, upper_limit, int((upper_limit-lower_limit)/h))
     analytical_sol = (lambda x: a_0 * np.exp(-a*x))(x)
     
+    #numerically approximated values
     sol_y = [a_0]
     for i in range(len(x)-1):
         a_0 += -a *a_0 * h
         sol_y.append(a_0)
-    print(len(x), len(analytical_sol), len(sol_y))
+
     return x, analytical_sol, np.array(sol_y)
 
 def f2(w, x_0, v_0, h, lower_limit, upper_limit):
-    # first need to get a approximation of v using euler in order to use this for a second approximation for x
+    # first need to get an approximation of v using euler in order to use this for a second approximation of x
     # x ~ - w**2 * x * h**2 * 1/2 + v * h
     
     x = np.linspace(lower_limit, upper_limit, int((upper_limit-lower_limit)/h))
@@ -30,7 +35,6 @@ def f2(w, x_0, v_0, h, lower_limit, upper_limit):
 
         x_0 += - w**2 * x_0 * h**2 * 0.5 + v_0 * h
         ysol.append(x_0)
-    print(len(x), len(vsol), len(ysol), len(asol))
     return x, vsol, ysol, asol
 
 
@@ -41,6 +45,8 @@ def f2(w, x_0, v_0, h, lower_limit, upper_limit):
 
 def plot():   
     
+    #first plot:
+
     lower_limit = 0
     upper_limit = 7
 
@@ -51,15 +57,13 @@ def plot():
         x = b[0]
         asol = b[1]
         soly = b[2]
-        #print(x, asol, soly)
    
         axs[row, col].plot(x, asol)
         axs[row, col].plot(x, soly)
-        print(a, h, a_o)
         axs[row, col].set_title("a = {0}, h= {1}, a_0 = {2}".format(a, h, a_o))
     
 
-
+    #setting up the second plot:
     
     fig, axs = plt.subplots(3, 3, sharex=True, sharey=True)
     
