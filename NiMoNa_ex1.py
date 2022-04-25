@@ -33,7 +33,7 @@ def f2(w, x_0, v_0, h, lower_limit, upper_limit):
         v_0 += - w**2 * x_0 * h
         vsol.append(v_0)
 
-        x_0 += - w**2 * x_0 * h**2 * 0.5 + v_0 * h
+        x_0 +=  w**2 * x_0 * h**2 * 0.5 + v_0 * h
         ysol.append(x_0)
     return x, vsol, ysol, asol
 
@@ -88,3 +88,4 @@ def plot():
 
 plot()
 
+#
