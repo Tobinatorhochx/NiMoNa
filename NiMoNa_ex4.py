@@ -2,6 +2,7 @@
 # decided to increase A by increments of 2, but I am still reaching populations below 0. I am not sure whether this is my bad 
 # implementation of the model, or the model itself that leads to weird results.
 
+# update #1: I changed the value of A, and it seems to have somewhat improved the results.
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,7 +29,8 @@ def main():
     # intitializing the parameters. C is constant, V fluctuating, p contains the populations and M are the matrices.
     C = [1.5 for x in range(5)]
     V = [(lambda t, A: 1 + A * 0.1 * np.sin(t)) for x in range(5)]
-    A = [x for x in range(1, 2*len(V), 2)]
+    A = [x/10 for x in range(1, 10*len(V), 10)]
+    # first version: A = [x for x in range(1, 2*len(V), 2)]
     x = np.linspace(0, 15, 16)
     p = np.empty((5, 2, 16))
     M = m(V, C, x, A)
