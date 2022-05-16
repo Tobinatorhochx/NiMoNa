@@ -7,9 +7,12 @@
 
 # update #2: restarted the whole project as I found out that my results where completely false
 
+# update #3: added the missing exercises.
+
 
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import rand
 
 
 # r returns the replicator
@@ -55,7 +58,7 @@ def main(dim=3):
         axs[j].set_title("V = 1 + {0}sin({1}x)".format(A[j],f[j]))
     plt.show()
     
-def gaussian(steps, dim):
+def random_walk(steps, dim):
     
     
     
@@ -64,10 +67,10 @@ def gaussian(steps, dim):
     for i in range(dim):
         np.random.seed(i)
         arr[i] = np.array([np.random.normal(loc=0, scale=1) for x in range(steps)])
-        plt.plot(np.arange(steps), np.cumsum(arr[i]), label="seed = {0}, mean = {1}, standard-deviation = {2}".format(i, np.mean(np.cumsum(arr[i])), np.std(np.cumsum(arr[i]))))
-        
-    plt.legend()
-    plt.show()
+        #plt.plot(np.arange(steps), np.cumsum(arr[i]), label="seed = {0}, mean = {1}, standard-deviation = {2}".format(i, np.mean(np.cumsum(arr[i])), np.std(np.cumsum(arr[i]))))
+    return arr
+    #plt.legend()
+    #plt.show()
 
 
 
@@ -86,4 +89,4 @@ def gaussian(steps, dim):
 
 if __name__ == "__main__":
    main()
-   gaussian(100000, 3)
+   random_walk(100000, 3)
