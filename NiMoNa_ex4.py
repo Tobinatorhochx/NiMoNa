@@ -67,10 +67,10 @@ def random_walk(steps, dim):
     for i in range(dim):
         np.random.seed(i)
         arr[i] = np.array([np.random.normal(loc=0, scale=1) for x in range(steps)])
-        #plt.plot(np.arange(steps), np.cumsum(arr[i]), label="seed = {0}, mean = {1}, standard-deviation = {2}".format(i, np.mean(np.cumsum(arr[i])), np.std(np.cumsum(arr[i]))))
-    return arr
-    #plt.legend()
-    #plt.show()
+        plt.plot(np.arange(steps), np.cumsum(arr[i]), label="seed = {0}, mean = {1}, standard-deviation = {2}".format(i, np.mean(np.cumsum(arr[i])), np.std(np.cumsum(arr[i]))))
+    
+    plt.legend()
+    plt.show()
 
 
 
