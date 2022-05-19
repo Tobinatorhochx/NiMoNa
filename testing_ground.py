@@ -43,3 +43,5 @@ x = np.linspace(0, 100, 101)
 f = [1, np.pi/2, np.pi/2]
 V_x = np.array([(lambda A, x, f: 1 + A * np.sin(f*x))(A, x, f) for A, f in zip(A, f)])
 print(V_x)
+
+print(len([]))
