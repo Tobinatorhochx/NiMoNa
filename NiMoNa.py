@@ -1,6 +1,5 @@
 import numpy as np
 
-from testing_ground import C
 
 def random_walk(steps, dim):
     
@@ -27,6 +26,7 @@ def r(x, M):
 
 # m returns the matrix
 def m(M, v, C):
+    
     for i in range(len(v)-1):       
         M[i, 0, 0] = (v[i]- C[i])/2
         M[i, 0, 1] = v[i]
@@ -35,7 +35,7 @@ def m(M, v, C):
 
     return M
 
-
+# returns multidimensional array containing C
 def gen_V(c=0, rw=0, osc=0, x=0, dim=0):
     if rw == True:
         rw = random_walk(len(x), dim)
@@ -45,6 +45,7 @@ def gen_V(c=0, rw=0, osc=0, x=0, dim=0):
     
     return c + osc + rw
 
+# returns multidimensional array containing V
 def gen_C(c=0, rw=0, osc=0, x=0, dim=0):
     if rw == True:
         rw = random_walk(len(x), dim)
@@ -52,31 +53,25 @@ def gen_C(c=0, rw=0, osc=0, x=0, dim=0):
         osc = oscillation(x, dim, osc[0], osc[1], osc[2])
     c = np.ones((dim, len(x))) * c
     
-    return C + osc + rw
+    return c + osc + rw
 
 
+#def network_development()
+
+
+
+# returns array containing the population
 def pop_development(C, V, P_0, x, steps, dim):
-    """ # The idea is to turn C and V into a multidimensional array, so that they can be used by the rest of the program.
-    if type(C) == float or type(C) == int:
-        C = np.array([[C for x in range(steps)] for y in range(dim)])
-    if type(V) == float or type(V) == int:
-        V = np.array([[V for x in range(steps)] for y in range(dim)])
-    if V.shape != (dim, steps):
-        V = np.array([V for x in range(dim)])
-    if C.shape != (dim, steps):
-        C = np.array([C for x in range(dim)])"""
     
-
-    
-    
-    
-
+    # initiating the population-array
     P = np.empty((dim, 2, steps))
+    
     P[:, :, 0] = P_0
     
 
     for j in range(dim):
-        
+        #P[j, :, 0] = P_0[j]
+        # setting up the matrix
         Matrix = m(M=np.empty((steps, 2, 2), dtype=float), v=V[j], C=C[j])
             
         for k in range(len(x)-1):
@@ -86,3 +81,10 @@ def pop_development(C, V, P_0, x, steps, dim):
             P[j, :, k+1] =  P[j, :, k+1]/(sum(np.absolute(P[j, :, k+1]))) 
 
     return P
+
+
+
+class Population():
+
+    def __init__(self):
+        self.x , self.y = np.random.uniform(0, 1), np.random.uniform(0, 1)

@@ -45,3 +45,14 @@ V_x = np.array([(lambda A, x, f: 1 + A * np.sin(f*x))(A, x, f) for A, f in zip(A
 print(V_x)
 
 print(len([]))
+
+""" # The idea is to turn C and V into a multidimensional array, so that they can be used by the rest of the program.
+    if type(C) == float or type(C) == int:
+        C = np.array([[C for x in range(steps)] for y in range(dim)])
+    if type(V) == float or type(V) == int:
+        V = np.array([[V for x in range(steps)] for y in range(dim)])
+    if V.shape != (dim, steps):
+        V = np.array([V for x in range(dim)])
+    if C.shape != (dim, steps):
+        C = np.array([C for x in range(dim)])"""
+    
