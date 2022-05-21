@@ -1,58 +1,35 @@
-import matplotlib.pyplot as plt
+import networkx as nx
+from matplotlib import pyplot as plt
 import numpy as np
+# current problem: doesn´t take "attr1" as argument
 
-"""
-def r(p, M):
-    return M.dot(p)/np.dot(p, M.dot(p))
-f = np.pi/2
-C = 1.5
-A = 1
-V = lambda A, x, f: 1 + A * np.sin(f * x)
+G = nx.random_geometric_graph(4, 0.5, dim=2)
+G = nx.DiGraph(G)
 
-x = np.linspace(0, 15, 16)
-M = np.empty(64, dtype=float).reshape((16, 2, 2))# into z, x, y direktion
-P = np.empty((2, 16))
-P[:, 0] = np.array([0.5, 0.5])
-V = V(A, x, f)
 
+node_v0 = {d: {"attr1":p0} for d, p0 in zip(np.arange(len(G.nodes())), np.ones(4)*0.5)}
+nx.set_node_attributes(G, node_v0)
+
+#edge_v0 = {(d, d+1): {"attr1":p0} for d, p0 in zip(np.arange(3), np.array([0.3, 0.9, 0.4, 1.2]))}
+edge_v0 = {t:{"attr1":v} for t, v in zip(G.edges(), np.arange(len(G.edges())))}
+
+nx.set_edge_attributes(G, edge_v0)
 
 
 
+nlabels = nx.get_node_attributes(G, "attr1")
+elabels = nx.get_edge_attributes(G, "attr1")
+
+pos = nx.spring_layout(G)
+#labels = nx.get_edge_data(G)
+
+print(nx.to_numpy_array(G, weight="attr1"))
+nx.draw(G, pos)
+
+
+nx.draw_networkx_labels(G, pos, labels=nlabels)
+nx.draw_networkx_edge_labels(G, pos, edge_labels=elabels)
 
 
 
-
-for i in range(len(x)):
-    M[i, 0, 0] = np.float64((V[i]-C)/2)
-    M[i, 0, 1] = np.float64(V[i])
-    M[i, 1, 0] = 0
-    M[i, 1, 1] = np.float64(V[i]/2)
-
-print(M)
-for i in range(len(x)-1):
-    P[:, i+1] = P[:, i] * r(P[:, i], M[i])
-
-plt.plot(x, P[0], x, P[1])
 plt.show()
-"""
-
-A = [0.1, 1, 10]
-C = 1.5
-x = np.linspace(0, 100, 101)
-
-f = [1, np.pi/2, np.pi/2]
-V_x = np.array([(lambda A, x, f: 1 + A * np.sin(f*x))(A, x, f) for A, f in zip(A, f)])
-print(V_x)
-
-print(len([]))
-
-""" # The idea is to turn C and V into a multidimensional array, so that they can be used by the rest of the program.
-    if type(C) == float or type(C) == int:
-        C = np.array([[C for x in range(steps)] for y in range(dim)])
-    if type(V) == float or type(V) == int:
-        V = np.array([[V for x in range(steps)] for y in range(dim)])
-    if V.shape != (dim, steps):
-        V = np.array([V for x in range(dim)])
-    if C.shape != (dim, steps):
-        C = np.array([C for x in range(dim)])"""
-    
