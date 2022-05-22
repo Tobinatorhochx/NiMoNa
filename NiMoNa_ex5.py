@@ -59,11 +59,11 @@ def main(steps=200, dim=4):
 
     nlabels = nx.get_node_attributes(G, "pop")
     elabels = nx.get_edge_attributes(G, "value")
-    nx.draw(G, pos) # G shows the hawks!
 
-
+    nx.draw_networkx_nodes(G, pos=pos)
+    nx.draw_networkx_edges(G, pos=pos, connectionstyle='arc3, rad = 0.1')
     nx.draw_networkx_labels(G, pos, labels=nlabels)
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=elabels)
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=elabels, font_size=5)
     plt.show()
 
     

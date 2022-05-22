@@ -6,8 +6,8 @@ import random as rnd
 def random_walk(steps, dim):   
     arr = np.empty((dim, steps))
     for i in range(dim):
-        np.random.seed(i)
-        arr[i] = np.array([np.random.normal(loc=0, scale=1) for x in range(steps)])
+        rnd.seed(i)
+        arr[i] = np.array([rnd.gauss(0, 1) for x in range(steps)])
     return arr
 
 # oscillating parameters
@@ -108,7 +108,7 @@ def pop_development(C, V, P_0, x, node_factor, steps, dim):
 
             # calculating the next generation
             P[j, :, k+1] = P[j, :, k] * r(P[j, :, k], Matrix[j, k,:,:])
-        # interactions with the network
+        # interactions with the network. Commenting out this line removes the effects of the network.
         P[:, :, k+1] = network_development(P[:, :, k], dim=dim, G=G, G1=G1)
         
             
