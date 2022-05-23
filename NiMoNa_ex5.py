@@ -31,11 +31,15 @@ def main(steps=200, dim=4):
 
 
     # initializing needed Parameters
-    x = np.linspace(0, steps, steps)
+    x = np.linspace(0, steps, 10*steps)
+    background_fitness = [0, 0, 0, 0]
+    c_C, c_V= 1.5, 1.5
     P_0 = np.array([[0.5, 0.5], [0.6, 0.4], [0.1, 0.9], [0.35, 0.65]])
-    V = nmn.gen_V(c=1.5, rw=True, osc=[[1, 2, 3, 4], [np.pi/2, np.pi/2, np.pi/2, np.pi/2], [0, 0, 0, 0]], x=x, dim=dim)
-    C = nmn.gen_C(c=1.5, rw=True, x=x, dim=dim) 
-    P , G, G1, pos= nmn.pop_development(C=C, x=x, P_0=P_0, V=V, node_factor = 1, steps=steps, dim=dim)
+    osc_V = [[1, 2, 4, 4], [1, 0.1, 3, 3], [0, 0, 0, 0]]
+    V = nmn.gen_V(c=c_V, rw=False, osc=osc_V, x=x, dim=dim)#
+    osc_C = [[0.1, 1, 100, 100], [0.1*np.pi/2, np.pi/2, 100*np.pi/2, 100*np.pi/2], [0, 0, np.pi/4, np.pi/4]]
+    C = nmn.gen_C(c=c_C, rw=True, osc=osc_C,  x=x, dim=dim) #
+    P , G, G1, pos= nmn.pop_development(C=C, x=x, P_0=P_0, V=V, background_fitness=background_fitness, node_factor = 1, steps=steps, dim=dim)
     nodes_hawks = {d:{"pop":p} for d, p in zip(range(dim), P[:, 0, -1])}
     
     nodes_doves = {d:{"pop":p} for d, p in zip(range(dim), P[:, 1, -1])}
@@ -49,6 +53,7 @@ def main(steps=200, dim=4):
         
         axs[i].plot(x, P[i, 0, :], label="hawks")
         axs[i].plot(x, P[i, 1, :], label="doves")
+        axs[i].set_title("P: const. = {0}, Amplitude= {1}, Frequenz = {2}, phase = {3}; C: const. = {4}, Amplitude= {5}, Frequenz = {6}, phase = {7}".format(c_V, osc_V[0][i], osc_V[1][i], osc_V[2][i], c_C, osc_C[0][i], osc_C[1][i], osc_C[2][i]))
     axs[0].legend(loc="upper right")
     plt.show()
 

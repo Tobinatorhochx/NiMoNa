@@ -6,8 +6,8 @@ import random as rnd
 def random_walk(steps, dim):   
     arr = np.empty((dim, steps))
     for i in range(dim):
-        rnd.seed(i)
-        arr[i] = np.array([rnd.gauss(0, 1) for x in range(steps)])
+        np.random.seed(i)
+        arr[i] = np.array([np.random.normal(0, 1) for x in range(steps)])
     return arr
 
 # oscillating parameters
@@ -20,8 +20,8 @@ def oscillation(x, dim, amp, freq, phase):
 
 
 # r returns the replicator
-def r(x, M):
-    return M.dot(x)/np.dot(x, M.dot(x))
+def r(x, M, b):
+    return (M.dot(x) + b)/(np.dot(x, M.dot(x))+ b)
 
 # m returns the matrix
 def m(M, v, C):
@@ -70,14 +70,14 @@ def network_development(p, dim, G, G1):
 
 
 # returns array containing the population
-def pop_development(C, V, P_0, x, node_factor, steps, dim):
+def pop_development(C, V, P_0, x, node_factor, background_fitness, steps, dim):
 
     # initiating the population-array
-    P = np.empty((dim, 2, steps))
+    P = np.empty((dim, 2, len(x)))
     P[:, :, 0] = P_0
-
+    print(len(x))
     # setting up the matrix
-    Matrix = m(M=np.empty((dim, steps, 2, 2), dtype=float), v=V, C=C)
+    Matrix = m(M=np.empty((dim, len(x), 2, 2), dtype=float), v=V, C=C)
     
 
     # setting up the network
@@ -101,15 +101,15 @@ def pop_development(C, V, P_0, x, node_factor, steps, dim):
 
     for e in G1.edges():
         G1[e[0]][e[1]]["value"] = 1/(node_factor * np.sqrt(e[0]**2 + e[1]**2) - rnd.gauss(0, 0.5))
-
     
     for k in range(len(x)-1):    
         for j in range(dim):
-
+            #print(j, k)
             # calculating the next generation
-            P[j, :, k+1] = P[j, :, k] * r(P[j, :, k], Matrix[j, k,:,:])
+            #print(P.shape, Matrix[j, k,:,:])
+            P[j, :, k+1] = P[j, :, k] * r(P[j, :, k], Matrix[j, k,:,:], b=background_fitness[j])
         # interactions with the network. Commenting out this line removes the effects of the network.
-        P[:, :, k+1] = network_development(P[:, :, k], dim=dim, G=G, G1=G1)
+        #P[:, :, k+1] = network_development(P[:, :, k], dim=dim, G=G, G1=G1)
         
             
         # normalizing the population
