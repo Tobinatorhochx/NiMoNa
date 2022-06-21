@@ -3,6 +3,11 @@ import numpy as np
 import random
 
 
+<<<<<<< HEAD
+=======
+#tasks: replace the random values in the edges with the correct values according to the migration policy
+
+>>>>>>> master
 
 class Network():
     def __init__(self, n, x, y, p_0):
