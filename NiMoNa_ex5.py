@@ -23,7 +23,7 @@
 #documentation: nmn.gen_C(c = const., rw=True/False, ocs=[[Amplitude],[Frequency],[Phase shift]] , x=array, dim=int)
 import numpy as np
 from matplotlib import pyplot as plt
-import NiMoNa as nmn
+import NiMoNa_networkx as nmn
 import networkx as nx
 
 def main(steps=200, dim=4):
