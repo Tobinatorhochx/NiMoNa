@@ -1,6 +1,53 @@
+from matplotlib import pyplot as plt
 import numpy as np
-import networkx as nx
-import random as rnd
+import random
+
+
+
+class Network():
+    def __init__(self, n, x, y, p_0):
+        self.x = x
+        self.y = y
+        self.num = n
+        self.pop = p_0
+        
+
+
+
+    def edgeofhawks(self, ListOfNodes):
+            
+            self.hawkedges = {(self.num, m):np.sqrt((self.x - snode.x)**2 + (self.y - snode.y)**2) * random.random() for snode, m in zip(ListOfNodes, range(len(ListOfNodes))) if self != snode}
+            #print("{0}\n\n".format(self.edges))
+
+    def edgeofdoves(self, ListOfNodes):
+            
+            self.doveedges = {(self.num, m):np.sqrt((self.x - snode.x)**2 + (self.y - snode.y)**2) * random.random()*2 for snode, m in zip(ListOfNodes, range(len(ListOfNodes))) if self != snode}
+    
+
+def total_pop(ListofNodes):
+    p = 0
+    for node in ListofNodes:
+        p += np.sum(node.pop)
+    return p
+
+
+def network_development(ListOfNodes):
+
+    for n1 in ListOfNodes:
+        n1.next_pop = n1.pop
+        for n2 in ListOfNodes:
+            if n1.num != n2.num:
+
+                n1.next_pop[0] += n2.pop[0] * n1.hawkedges[(n1.num, n2.num)]
+            
+                n1.next_pop[1] += n2.pop[1] * n1.doveedges[(n1.num, n2.num)]
+    for node in ListOfNodes:
+        node.pop = node.next_pop
+    # for node in ListOfNodes:
+    #     node.pop = node.pop/total_pop(ListOfNodes)
+    #     print(total_pop(ListOfNodes))
+    # print("\n\n")
+
 
 # parameter calculated by a random walk
 def random_walk(steps, dim):   
@@ -12,7 +59,7 @@ def random_walk(steps, dim):
 
 # oscillating parameters
 def oscillation(x, dim, amp, freq, phase):
-    arr = np.empty((dim, len(x)))
+    arr = np.empty((dim, x))
     F = lambda A, f, t, p: A * np.cos(f * t + p)
     for i in range(dim):
         arr[i] = F(amp[i], freq[i], x, phase[i])
@@ -37,10 +84,10 @@ def m(M, v, C):
 # returns multidimensional array containing C
 def gen_V(c=0, rw=0, osc=0, x=0, dim=0):
     if rw == True:
-        rw = random_walk(len(x), dim)
+        rw = random_walk(x, dim)
     if osc != 0:
         osc = oscillation(x, dim, osc[0], osc[1], osc[2])
-    c = np.ones((dim, len(x))) * c
+    c = np.ones((dim, x)) * c
     
     return c + osc + rw
 
@@ -50,70 +97,41 @@ def gen_C(c=0, rw=0, osc=0, x=0, dim=0):
         rw = random_walk(len(x), dim)
     if osc != 0:
         osc = oscillation(x, dim, osc[0], osc[1], osc[2])
-    c = np.ones((dim, len(x))) * c
+    c = np.ones((dim, x)) * c
     
     return c + osc + rw
 
-# returns the updated populations after interaction between the nodes
-def network_development(p, dim, G, G1):
-    pops = np.empty(p.shape)
-
-    for e in G.edges():
-        pops[e[0]][0] = p[e[0]][0] + G[e[0]][e[1]]["value"] * p[e[1]][0]
-        pops[e[1]][0] = p[e[1]][0] + G[e[1]][e[0]]["value"] * p[e[0]][0]
-    for e in G1.edges():
-        pops[e[0]][1] = p[e[0]][1] + G1[e[0]][e[1]]["value"] * p[e[1]][1]
-        pops[e[1]][1] = p[e[1]][1] + G1[e[1]][e[0]]["value"] * p[e[0]][1]
-    return pops
-        
-
-
-
 # returns array containing the population
-def pop_development(C, V, P_0, x, node_factor, steps, dim):
+def pop_development(C, V, P_0, steps, nnodes):
 
     # initiating the population-array
-    P = np.empty((dim, 2, steps))
-    P[:, :, 0] = P_0
+    P = np.empty((nnodes, 2, steps))
+    
+    P[:, :, 0] = P_0/np.sum(P_0)
 
     # setting up the matrix
-    Matrix = m(M=np.empty((dim, steps, 2, 2), dtype=float), v=V, C=C)
+    Matrix = m(M=np.empty((nnodes, steps, 2, 2), dtype=float), v=V, C=C)
     
-
-    # setting up the network
-    G = nx.DiGraph()
-    for i in range(dim):
-        G.add_node(i)
-    pos = nx.random_layout(G)
-    for i in range(dim):
-        for j in range(dim):
-            if np.sqrt((pos[i][0]-pos[j][0])**2-(pos[i][1]-pos[i][1])**2) < 0.6 and i != j:
-                G.add_edge(i, j)
-    nodes_0 = {d:{"pop":p} for d, p in zip(range(dim), P[:, 0, 0])}
-    nx.set_node_attributes(G, nodes_0)
-
-    # G for the hawks, G1 for the doves
-    G1 = G.copy() 
-
-    for e in G.edges():
-        # here is room for further implementations, e. g. greater migration in areas less suited for living
-        G[e[0]][e[1]]["value"] = 1/(node_factor * np.sqrt(e[0]**2 + e[1]**2) - rnd.gauss(0, 0.5))
-
-    for e in G1.edges():
-        G1[e[0]][e[1]]["value"] = 1/(node_factor * np.sqrt(e[0]**2 + e[1]**2) - rnd.gauss(0, 0.5))
-
-    
-    for k in range(len(x)-1):    
-        for j in range(dim):
-
-            # calculating the next generation
-            P[j, :, k+1] = P[j, :, k] * r(P[j, :, k], Matrix[j, k,:,:])
-        # interactions with the network
-        P[:, :, k+1] = network_development(P[:, :, k], dim=dim, G=G, G1=G1)
-        
+    for k in range(1, steps):
+        ListOfNodes = []
+        for j in range(nnodes):
             
-        # normalizing the population
-        for j in range(dim):
-            P[j, :, k+1] =  P[j, :, k+1]/(sum(np.absolute(P[j, :, k+1]))) 
+            P[j, :, k] = P[j, :, k-1] * r(P[j, :, k-1], Matrix[j, k-1,:,:])
+            ListOfNodes.append(Network(j, random.random(), random.random(), P[j, :, k]))
+        
+        # setting up the Nodes and the connecting edges
+        for node in ListOfNodes:
+            node.edgeofhawks(ListOfNodes=ListOfNodes)
+            node.edgeofdoves(ListOfNodes=ListOfNodes)
+        #network effects
+        network_development(ListOfNodes)
 
-    return P, G, G1, pos
+        for node in ListOfNodes:
+            
+            P[node.num, :, k] = node.pop
+
+        #normalizing the population
+        P[:,:,k] = P[:,:,k]/np.sum(P[:,:,k])
+        print(P[:,:,k], np.sum(P[:,:,k]))
+        print("\n\n")
+    return P
